@@ -1,18 +1,25 @@
 import "./Home.scss";
 import React, { useState } from "react";
-import { setSelectionRange } from "@testing-library/user-event/dist/utils";
-import WeatherApi from "../../service/WeatherApi";
+import TodayWeatherApi from "../../service/TodayWeatherApi";
 import Header from "../../components/header/Header";
 import ItemDetail from "../../components/itemDetail/ItemDetail";
 import { TbSunFilled, TbLetterG, TbTemperatureMinus } from "react-icons/tb";
+import axios from "axios";
+import FourDaysLaterWeatherApi from "../../service/FourDaysLaterWeatherApi";
 
 function Home() {
   const [selectedCity, setselectedCity] = useState("");
-  const [responseData, setResponseData] = useState({
+  const [responseTodayData, setResponseTodayData] = useState({
     humidity: "--:--",
-    pressure: "0",
-    tempMin: "0",
+    pressure: 0,
+    tempMin: 0,
   });
+  const [response4DaysLaterData, setResponse4DaysLaterData] = useState({
+    humidity: "--:--",
+    pressure: 0,
+    tempMin: 0,
+  });
+
   const cityData = [
     {
       text: "انتخاب کنید",
@@ -31,24 +38,71 @@ function Home() {
       value: "London",
     },
   ];
-  const itemTitelData = [
+  const item4DaysLaterTitelData = [
     {
       title: "طلوع خورشید:",
-      value: responseData.humidity,
+      value: response4DaysLaterData.humidity,
       altIcon: <TbSunFilled />,
     },
     {
       title: "فشار هوا:",
-      value: responseData.pressure,
+      value: response4DaysLaterData.pressure,
       altIcon: <TbLetterG />,
     },
     {
       title: "کمترین دما:",
-      value: responseData.tempMin,
+      value: response4DaysLaterData.tempMin,
+      altIcon: <TbTemperatureMinus />,
+    },
+  ];
+  const itemTodayTitelData = [
+    {
+      title: "طلوع خورشید:",
+      value: responseTodayData.humidity,
+      altIcon: <TbSunFilled />,
+    },
+    {
+      title: "فشار هوا:",
+      value: responseTodayData.pressure,
+      altIcon: <TbLetterG />,
+    },
+    {
+      title: "کمترین دما:",
+      value: responseTodayData.tempMin,
       altIcon: <TbTemperatureMinus />,
     },
   ];
 
+  function CallTodayApi(cityNameValue) {
+    cityNameValue !== ""
+      ? TodayWeatherApi(cityNameValue).then((response) => {
+          setResponseTodayData({
+            humidity: response.data.main.humidity.toString(),
+            pressure: response.data.main.pressure.toString(),
+            tempMin: response.data.main.temp_min.toString(),
+          });
+        })
+      : setResponseTodayData({
+          humidity: "--:--",
+          pressure: 0,
+          tempMin: 0,
+        });
+  }
+  function Call4DaysLaterApi(cityNameValue) {
+    cityNameValue !== ""
+      ? FourDaysLaterWeatherApi(cityNameValue).then((response) => {
+        setResponse4DaysLaterData({
+            humidity: response.data.main.humidity.toString(),
+            pressure: response.data.main.pressure.toString(),
+            tempMin: response.data.main.temp_min.toString(),
+          });
+        })
+      : setResponse4DaysLaterData({
+          humidity: "--:--",
+          pressure: 0,
+          tempMin: 0,
+        });
+  }
   return (
     <div className="home">
       <Header />
@@ -61,10 +115,8 @@ function Home() {
             onChange={(cityName) => {
               const cityNameValue = cityName.target.value;
               setselectedCity(cityNameValue);
-              WeatherApi({
-                cityName: { cityNameValue },
-                weatherData: { setResponseData },
-              });
+              CallTodayApi(cityNameValue);
+              Call4DaysLaterApi(cityNameValue);
             }}
           >
             {cityData.map((item) => {
@@ -77,11 +129,9 @@ function Home() {
           </select>
         </div>
         <div className="home__weather-info-wrapper">
-          <h2>Today :</h2>
+          <h2>امروز :</h2>
           <div className="home__weather-info-today">
-            {itemTitelData.map((item, index) => {
-              console.log("rerender items");
-              console.log(responseData);
+            {itemTodayTitelData.map((item, index) => {
               return (
                 <ItemDetail
                   key={index}
@@ -92,9 +142,9 @@ function Home() {
               );
             })}
           </div>
-          <h2>four days later :</h2>
+          <h2>چهار روز بعد :</h2>
           <div className="home__weather-info-four-days-later">
-            {itemTitelData.map((item, index) => {
+            {item4DaysLaterTitelData.map((item, index) => {
               return (
                 <ItemDetail
                   key={index}
