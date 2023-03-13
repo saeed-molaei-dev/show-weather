@@ -92,9 +92,9 @@ function Home() {
     cityNameValue !== ""
       ? FourDaysLaterWeatherApi(cityNameValue).then((response) => {
         setResponse4DaysLaterData({
-            humidity: response.data.main.humidity.toString(),
-            pressure: response.data.main.pressure.toString(),
-            tempMin: response.data.main.temp_min.toString(),
+            humidity:response.data.list[32].main.humidity.toString(),
+            pressure: response.data.list[32].main.pressure.toString(),
+            tempMin: response.data.list[32].main.temp_min.toString(),
           });
         })
       : setResponse4DaysLaterData({
