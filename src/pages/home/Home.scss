@@ -1,19 +1,38 @@
 .home {
-  text-align: center;
-}
-
-.home-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.home-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  max-width: 700px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  &__header {
+    height: 60px;
+    width: 100%;
+    margin-block: 20px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__main {
+    border: 1px solid black;
+  }
+  &__selected-city {
+    text-align: center;
+    select {
+      border: none;
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  &__weather-info-wrapper > div {
+    width: 100%;
+    padding: 0 16px;
+  }
+  &__weather-item {
+    border: 1px solid black;
+    margin-bottom: 16px;
+  }
 }
