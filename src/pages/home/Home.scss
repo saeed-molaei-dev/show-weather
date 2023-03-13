@@ -5,17 +5,11 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  &__header {
-    height: 60px;
-    width: 100%;
-    margin-block: 20px;
-    border: 1px solid black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
   &__main {
     border: 1px solid black;
+    h2 {
+      padding-inline-start: 8px;
+    }
   }
   &__selected-city {
     text-align: center;
@@ -26,13 +20,13 @@
       }
     }
   }
-
   &__weather-info-wrapper > div {
     width: 100%;
-    padding: 0 16px;
+    padding-inline: 16px;
   }
-  &__weather-item {
-    border: 1px solid black;
-    margin-bottom: 16px;
+  &__weather-info-today,
+  &__weather-info-four-days-later {
+    display: flex;
+    justify-content: space-between;
   }
 }

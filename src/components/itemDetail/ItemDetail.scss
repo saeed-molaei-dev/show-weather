@@ -1,0 +1,17 @@
+.item-detail {
+  width: 30%;
+  height: 64px;
+  border: 1px solid black;
+  margin-bottom: 16px;
+  padding-inline: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  &__text-wrapper {
+    display: flex;
+  }
+  &__value {
+    padding-inline: 8px;
+  }
+}
