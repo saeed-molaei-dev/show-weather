@@ -1,163 +1,107 @@
 import "./Home.scss";
 import React, { useState } from "react";
-import TodayWeatherApi from "../../service/TodayWeatherApi";
 import Header from "../../components/header/Header";
 import ItemDetail from "../../components/itemDetail/ItemDetail";
-import { TbSunFilled, TbLetterG, TbTemperatureMinus } from "react-icons/tb";
-import axios from "axios";
-import FourDaysLaterWeatherApi from "../../service/FourDaysLaterWeatherApi";
+import { TbLetterG, TbTemperatureCelsius } from "react-icons/tb";
+import { SiCloudways } from "react-icons/si";
+import forecastFourDayApi from "../../service/ForecastFourDayApi";
+import { CITIES_DATA } from "../../consts/cities.const.";
+import { WEATHERS_STATES_DATA } from "../../consts/homePage.const";
+import currentWeatherDataApi from "../../service/CurrentWeatherDataApi";
 
 function Home() {
   const [selectedCity, setselectedCity] = useState("");
-  const [responseTodayData, setResponseTodayData] = useState({
-    humidity: "--:--",
-    pressure: 0,
-    tempMin: 0,
-  });
-  const [response4DaysLaterData, setResponse4DaysLaterData] = useState({
-    humidity: "--:--",
-    pressure: 0,
-    tempMin: 0,
-  });
+  const [currentWeatherData, setCurrentWeatherData] =
+    useState(WEATHERS_STATES_DATA);
+  const [forecastFourDay, setForecastFourDay] = useState(WEATHERS_STATES_DATA);
 
-  const cityData = [
-    {
-      text: "انتخاب کنید",
-      value: "",
-    },
-    {
-      text: "تهران",
-      value: "Tehran",
-    },
-    {
-      text: "بابل",
-      value: "Babol",
-    },
-    {
-      text: "لندن",
-      value: "London",
-    },
-  ];
-  const item4DaysLaterTitelData = [
-    {
-      title: "طلوع خورشید:",
-      value: response4DaysLaterData.humidity,
-      altIcon: <TbSunFilled />,
-    },
-    {
-      title: "فشار هوا:",
-      value: response4DaysLaterData.pressure,
-      altIcon: <TbLetterG />,
-    },
-    {
-      title: "کمترین دما:",
-      value: response4DaysLaterData.tempMin,
-      altIcon: <TbTemperatureMinus />,
-    },
-  ];
-  const itemTodayTitelData = [
-    {
-      title: "طلوع خورشید:",
-      value: responseTodayData.humidity,
-      altIcon: <TbSunFilled />,
-    },
-    {
-      title: "فشار هوا:",
-      value: responseTodayData.pressure,
-      altIcon: <TbLetterG />,
-    },
-    {
-      title: "کمترین دما:",
-      value: responseTodayData.tempMin,
-      altIcon: <TbTemperatureMinus />,
-    },
-  ];
+  function handleCityChange(cityName) {
+    setselectedCity(cityName);
+    currentWeatherDataApi(cityName).then((response) => {
+      setCurrentWeatherData({
+        windSpeed: response.data.wind.speed.toString(),
+        pressure: response.data.main.pressure.toString(),
+        tempMin: (response.data.main.temp_min.toString() - 273.15).toFixed(1),
+      });
+    });
+    forecastFourDayApi(cityName).then((response) => {
+      setForecastFourDay({
+        windSpeed: response.data.list[32].wind.speed.toString(),
+        pressure: response.data.list[32].main.pressure.toString(),
+        tempMin: (
+          response.data.list[32].main.temp_min.toString() - 273.15
+        ).toFixed(1),
+      });
+    });
+  }
 
-  function CallTodayApi(cityNameValue) {
-    cityNameValue !== ""
-      ? TodayWeatherApi(cityNameValue).then((response) => {
-          setResponseTodayData({
-            humidity: response.data.main.humidity.toString(),
-            pressure: response.data.main.pressure.toString(),
-            tempMin: response.data.main.temp_min.toString(),
-          });
-        })
-      : setResponseTodayData({
-          humidity: "--:--",
-          pressure: 0,
-          tempMin: 0,
-        });
-  }
-  function Call4DaysLaterApi(cityNameValue) {
-    cityNameValue !== ""
-      ? FourDaysLaterWeatherApi(cityNameValue).then((response) => {
-        setResponse4DaysLaterData({
-            humidity:response.data.list[32].main.humidity.toString(),
-            pressure: response.data.list[32].main.pressure.toString(),
-            tempMin: response.data.list[32].main.temp_min.toString(),
-          });
-        })
-      : setResponse4DaysLaterData({
-          humidity: "--:--",
-          pressure: 0,
-          tempMin: 0,
-        });
-  }
   return (
-    <div className="home">
+    <>
       <Header />
-      <div className="home__main">
-        <div className="home__selected-city">
-          <select
-            name="city-name"
-            id="city-name"
-            value={selectedCity}
-            onChange={(cityName) => {
-              const cityNameValue = cityName.target.value;
-              setselectedCity(cityNameValue);
-              CallTodayApi(cityNameValue);
-              Call4DaysLaterApi(cityNameValue);
-            }}
-          >
-            {cityData.map((item) => {
+      <div className="home">
+        <select
+          name="city-name"
+          id="city-name"
+          className="home__selected-city"
+          value={selectedCity}
+          onChange={(cityName) => {
+            handleCityChange(cityName.target.value);
+          }}
+        >
+          {CITIES_DATA.map((item, index) => {
+            if (index === 0) {
+              return (
+                <option disabled value={item.value} key={item.value}>
+                  {item.text}
+                </option>
+              );
+            } else {
               return (
                 <option value={item.value} key={item.value}>
                   {item.text}
                 </option>
               );
-            })}
-          </select>
+            }
+          })}
+        </select>
+        <p>امروز :</p>
+        <div className="home__items-holder">
+          <ItemDetail
+            itemTitle={"سرعت باد"}
+            itemValue={currentWeatherData.windSpeed}
+            itemIcon={<SiCloudways />}
+          />
+          <ItemDetail
+            itemTitle={"فشار هوا"}
+            itemValue={currentWeatherData.pressure}
+            itemIcon={<TbLetterG />}
+          />
+          <ItemDetail
+            itemTitle={"کمترین دما"}
+            itemValue={currentWeatherData.tempMin}
+            itemIcon={<TbTemperatureCelsius />}
+          />
         </div>
-        <div className="home__weather-info-wrapper">
-          <h2>امروز :</h2>
-          <div className="home__weather-info-today">
-            {itemTodayTitelData.map((item, index) => {
-              return (
-                <ItemDetail
-                  key={index}
-                  itemTitle={item.title}
-                  itemValue={item.value}
-                  itemIcon={item.altIcon}
-                />
-              );
-            })}
-          </div>
-          <h2>چهار روز بعد :</h2>
-          <div className="home__weather-info-four-days-later">
-            {item4DaysLaterTitelData.map((item, index) => {
-              return (
-                <ItemDetail
-                  key={index}
-                  itemTitle={item.title}
-                  itemValue={item.value}
-                  itemIcon={item.altIcon}
-                />
-              );
-            })}
-          </div>
+        <p>چهار روز بعد :</p>
+        <div className="home__items-holder">
+          <ItemDetail
+            itemTitle={"سرعت باد"}
+            itemValue={forecastFourDay.windSpeed}
+            itemIcon={<SiCloudways />}
+          />
+          <ItemDetail
+            itemTitle={"فشار هوا"}
+            itemValue={forecastFourDay.pressure}
+            itemIcon={<TbLetterG />}
+          />
+          <ItemDetail
+            itemTitle={"کمترین دما"}
+            itemValue={forecastFourDay.tempMin}
+            itemIcon={<TbTemperatureCelsius />}
+          />
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

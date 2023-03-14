@@ -1,32 +1,34 @@
 .home {
-  height: 100vh;
-  width: 100vw;
-  max-width: 700px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  &__main {
-    border: 1px solid black;
-    h2 { 
-      padding-inline-start: 8px;
-    }
+  border: 1px solid black;
+  padding-inline: 16px;
+
+  p {
+    padding-inline-start: 8px;
   }
+
   &__selected-city {
-    text-align: center;
-    select {
-      border: none;
-      &:focus {
-        outline: none;
-      }
+    width: fit-content;
+    margin: 16px auto 0;
+    display: block;
+    border: none;
+    font-size: 16px;
+
+    &:focus {
+      outline: none;
     }
   }
-  &__weather-info-wrapper > div {
-    width: 100%;
-    padding-inline: 16px;
-  }
-  &__weather-info-today,
-  &__weather-info-four-days-later {
+
+  &__items-holder {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .home {
+    &__items-holder {
+      flex-direction: column;
+    }
   }
 }

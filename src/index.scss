@@ -7,10 +7,21 @@ body {
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
 }
+
 * {
   box-sizing: border-box;
 }
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.weather-wrapper {
+  height: 100vh;
+  width: 100vw;
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }

@@ -3,15 +3,29 @@
   height: 64px;
   border: 1px solid black;
   margin-bottom: 16px;
-  padding-inline: 16px;
+  padding-inline: 8px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: space-evenly;
   align-items: center;
-  font-size: 14px;
-  &__text-wrapper {
+
+  &__header-wrapper {
+    width: 100%;
     display: flex;
+    justify-content: space-evenly;
+
+    svg {
+      margin-top: 4px;
+    }
   }
+
   &__value {
     padding-inline: 8px;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .item-detail {
+    width: 100%;
   }
 }
